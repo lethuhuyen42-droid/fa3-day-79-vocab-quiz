@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lễ Hội Từ Vựng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B2A5B;
+    --navy-deep:#0F1B3E;
+    --red:#E8433A;
+    --gold:#FFC93C;
+    --teal:#28B8A6;
+    --cream:#FFF7E6;
+    --white:#FFFFFF;
+    --ink:#1B2A5B;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,201,60,0.25), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(40,184,166,0.25), transparent 45%),
+      linear-gradient(180deg, var(--navy-deep), var(--navy) 60%, #142046);
+    font-family:'Nunito', sans-serif;
+    color:var(--ink);
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:28px 14px 60px;
+    overflow-x:hidden;
+  }
+  .stage{
+    width:100%;
+    max-width:760px;
+    position:relative;
+  }
+
+  /* ===== Big top stripe header ===== */
+  .bigtop{
+    position:relative;
+    border-radius:22px 22px 0 0;
+    overflow:hidden;
+    height:64px;
+    background:repeating-linear-gradient(
+      100deg,
+      var(--red) 0 34px,
+      var(--cream) 34px 68px
+    );
+    box-shadow: inset 0 -6px 0 rgba(0,0,0,0.12);
+  }
+  .bigtop::after{
+    content:"";
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height:16px;
+    background:repeating-linear-gradient(90deg, var(--gold) 0 20px, transparent 20px 40px);
+    clip-path: polygon(0 0, 100% 0, 97.5% 100%, 95% 0, 92.5% 100%, 90% 0, 87.5% 100%, 85% 0, 82.5% 100%, 80% 0, 77.5% 100%, 75% 0, 72.5% 100%, 70% 0, 67.5% 100%, 65% 0, 62.5% 100%, 60% 0, 57.5% 100%, 55% 0, 52.5% 100%, 50% 0, 47.5% 100%, 45% 0, 42.5% 100%, 40% 0, 37.5% 100%, 35% 0, 32.5% 100%, 30% 0, 27.5% 100%, 25% 0, 22.5% 100%, 20% 0, 17.5% 100%, 15% 0, 12.5% 100%, 10% 0, 7.5% 100%, 5% 0, 2.5% 100%, 0 0);
+  }
+
+  .card{
+    background:var(--cream);
+    border-radius:0 0 22px 22px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.35);
+    padding:26px 26px 30px;
+  }
+
+  h1.title{
+    font-family:'Baloo 2', sans-serif;
+    font-size:clamp(28px,6vw,42px);
+    text-align:center;
+    color:var(--red);
+    margin:6px 0 2px;
+    -webkit-text-stroke:1.5px var(--navy);
+    letter-spacing:0.5px;
+  }
+  .subtitle{
+    text-align:center;
+    font-weight:800;
+    color:var(--navy);
+    margin:0 0 20px;
+    font-size:15px;
+    opacity:0.85;
+  }
+
+  /* ===== Screens ===== */
+  .screen{display:none;}
+  .screen.active{display:block; animation:fadein 0.35s ease;}
+  @keyframes fadein{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  /* Category tent cards */
+  .tents{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+    margin-top:8px;
+  }
+  @media (max-width:480px){ .tents{grid-template-columns:1fr;} }
+
+  .tent-btn{
+    position:relative;
+    border:none;
+    cursor:pointer;
+    border-radius:16px;
+    padding:22px 14px 18px;
+    text-align:center;
+    font-family:'Baloo 2', sans-serif;
+    color:var(--white);
+    font-size:20px;
+    font-weight:700;
+    box-shadow:0 8px 0 rgba(0,0,0,0.18), 0 14px 24px rgba(0,0,0,0.18);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .tent-btn:active{ transform:translateY(4px); box-shadow:0 4px 0 rgba(0,0,0,0.18), 0 6px 14px rgba(0,0,0,0.18); }
+  .tent-btn .emoji{ font-size:36px; display:block; margin-bottom:6px; }
+  .tent-btn .count{
+    display:block; font-family:'Nunito',sans-serif; font-weight:800; font-size:12.5px;
+    opacity:0.9; margin-top:4px;
+  }
+  .tent-1{ background:linear-gradient(160deg, var(--red), #c22a22); }
+  .tent-2{ background:linear-gradient(160deg, var(--teal), #1a8b7d); }
+  .tent-3{ background:linear-gradient(160deg, #6C63FF, #4a41d1); }
+  .tent-4{ background:linear-gradient(160deg, var(--gold), #e0a600); color:var(--navy); }
+  .tent-5{ background:linear-gradient(160deg, var(--navy), #0c1633); grid-column:1/-1; }
+
+  /* Flag progress bar */
+  .flags{
+    display:flex;
+    gap:4px;
+    justify-content:center;
+    margin:18px 0 6px;
+    flex-wrap:wrap;
+  }
+  .flag{
+    width:22px; height:26px;
+    clip-path:polygon(0 0,100% 50%,0 100%);
+    background:#d9d2c0;
+    transition:background .2s ease, transform .2s ease;
+  }
+  .flag.done{ background:var(--gold); transform:scale(1.1) rotate(0deg); }
+  .flag.wrong-flag{ background:#c9c2af; }
+
+  .quiz-top{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:6px;
+  }
+  .back-btn, .home-btn{
+    border:none; background:var(--navy); color:var(--white);
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:13px;
+    padding:8px 12px; border-radius:10px; cursor:pointer;
+  }
+  .score-pill{
+    background:var(--gold); color:var(--navy);
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:13px;
+    padding:8px 14px; border-radius:20px;
+    display:flex; align-items:center; gap:6px;
+  }
+
+  /* Question card */
+  .qcard{
+    background:var(--white);
+    border-radius:18px;
+    padding:26px 20px 22px;
+    margin-top:14px;
+    text-align:center;
+    box-shadow:0 10px 0 rgba(27,42,91,0.08), inset 0 0 0 3px rgba(27,42,91,0.06);
+    position:relative;
+  }
+  .q-emoji{
+    font-size:64px;
+    display:block;
+    margin-bottom:8px;
+    filter:drop-shadow(0 6px 6px rgba(0,0,0,0.15));
+  }
+  .q-vi{
+    font-family:'Baloo 2', sans-serif;
+    font-size:26px;
+    color:var(--red);
+    margin:4px 0 2px;
+  }
+  .q-cat{
+    font-size:12.5px;
+    font-weight:800;
+    color:var(--navy);
+    opacity:0.55;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:14px;
+  }
+
+  .answer-row{
+    display:flex; gap:10px; justify-content:center; margin-top:8px; flex-wrap:wrap;
+  }
+  #answerInput{
+    flex:1 1 220px;
+    max-width:320px;
+    font-family:'Nunito',sans-serif;
+    font-size:19px;
+    font-weight:800;
+    text-align:center;
+    padding:12px 14px;
+    border-radius:12px;
+    border:3px solid #d9d2c0;
+    outline:none;
+    color:var(--navy);
+    letter-spacing:1px;
+    background:var(--cream);
+  }
+  #answerInput:focus{ border-color:var(--teal); background:var(--white); }
+  #answerInput.shake{ animation:shake .35s; border-color:var(--red); }
+  #answerInput.right{ border-color:var(--teal); background:#e6fbf7; }
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-8px);}
+    40%{transform:translateX(8px);}
+    60%{transform:translateX(-6px);}
+    80%{transform:translateX(6px);}
+  }
+
+  .btn{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    border:none;
+    border-radius:12px;
+    padding:12px 20px;
+    cursor:pointer;
+    color:var(--white);
+    box-shadow:0 5px 0 rgba(0,0,0,0.18);
+    transition:transform .1s ease;
+  }
+  .btn:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,0.18); }
+  .btn-check{ background:var(--teal); }
+  .btn-hint{ background:var(--gold); color:var(--navy); box-shadow:0 5px 0 rgba(0,0,0,0.12); }
+  .btn-next{ background:var(--red); display:none; }
+
+  .feedback{
+    min-height:30px;
+    margin-top:14px;
+    font-family:'Baloo 2', sans-serif;
+    font-size:19px;
+    font-weight:700;
+  }
+  .feedback.ok{ color:var(--teal); }
+  .feedback.no{ color:var(--red); }
+
+  .hint-line{
+    margin-top:10px;
+    font-size:14px;
+    color:var(--navy);
+    opacity:0.75;
+    font-weight:700;
+    letter-spacing:2px;
+    min-height:18px;
+  }
+
+  /* Confetti */
+  .confetti-piece{
+    position:fixed;
+    top:-10px;
+    width:9px; height:14px;
+    opacity:0.9;
+    z-index:999;
+    pointer-events:none;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{ transform:translateY(110vh) rotate(540deg); opacity:0.2; }
+  }
+
+  /* End screen */
+  .end-emoji{ font-size:70px; text-align:center; display:block; margin-top:6px; }
+  .end-title{
+    font-family:'Baloo 2', sans-serif;
+    font-size:26px;
+    text-align:center;
+    color:var(--red);
+    margin:6px 0 4px;
+  }
+  .end-stats{
+    text-align:center;
+    font-weight:800;
+    color:var(--navy);
+    margin-bottom:18px;
+    font-size:15px;
+  }
+  .stars-row{ text-align:center; font-size:34px; letter-spacing:6px; margin-bottom:14px;}
+  .score10-box{
+    display:flex;
+    align-items:baseline;
+    justify-content:center;
+    gap:6px;
+    margin-bottom:14px;
+  }
+  .score10-label{
+    font-family:'Baloo 2', sans-serif;
+    font-size:14px;
+    font-weight:700;
+    color:var(--navy);
+    opacity:0.7;
+    align-self:center;
+    margin-right:6px;
+  }
+  .score10-num{
+    font-family:'Baloo 2', sans-serif;
+    font-size:48px;
+    font-weight:800;
+    color:var(--red);
+    -webkit-text-stroke:1px var(--navy);
+  }
+  .score10-max{
+    font-family:'Baloo 2', sans-serif;
+    font-size:20px;
+    font-weight:700;
+    color:var(--navy);
+    opacity:0.6;
+  }
+  .wrong-list{
+    background:var(--white);
+    border-radius:14px;
+    padding:14px 18px;
+    margin-bottom:18px;
+    font-size:14.5px;
+    max-height:220px;
+    overflow-y:auto;
+  }
+  .wrong-list h3{ font-family:'Baloo 2',sans-serif; color:var(--navy); font-size:15px; margin:0 0 8px; }
+  .wrong-item{ display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed #e3ddc9; }
+  .wrong-item b{ color:var(--red); }
+  .center-btns{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:6px; }
+  .btn-navy{ background:var(--navy); }
+
+  footer.note{
+    text-align:center; color:var(--white); opacity:0.55; font-size:12px; margin-top:14px;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="bigtop"></div>
+  <div class="card">
+    <h1 class="title">🎪 Lễ Hội Từ Vựng 🎪</h1>
+    <p class="subtitle">Ôn tập từ vựng Unit 12–15 · Điền từ tiếng Anh còn thiếu</p>
+
+    <!-- SCREEN 1: màn hình bắt đầu -->
+    <div class="screen active" id="screen-home">
+      <div class="tents">
+        <button class="tent-btn tent-5" data-cat="all" style="grid-column:1/-1;">
+          <span class="emoji">🎡</span>Bắt đầu bài kiểm tra
+          <span class="count" id="cnt-all"></span>
+        </button>
+      </div>
+      <p style="text-align:center; margin-top:16px; font-weight:800; color:var(--navy); opacity:0.75; font-size:14px;">
+        Toàn bộ từ vựng (Tính cách · Nghề nghiệp · Môn học · Đồ vật) sẽ được trộn ngẫu nhiên.<br>
+        Sau khi làm xong, bạn sẽ biết mình đúng bao nhiêu câu và được quy về điểm thang 10.
+      </p>
+    </div>
+
+    <!-- SCREEN 2: quiz -->
+    <div class="screen" id="screen-quiz">
+      <div class="quiz-top">
+        <button class="home-btn" onclick="goHome()">🏠 Trang chủ</button>
+        <div class="score-pill">⭐ <span id="scoreNow">0</span></div>
+      </div>
+      <div class="flags" id="flagsRow"></div>
+
+      <div class="qcard">
+        <span class="q-emoji" id="qEmoji">🎈</span>
+        <div class="q-cat" id="qCat">Chủ đề</div>
+        <div class="q-vi" id="qVi">nghĩa tiếng việt</div>
+        <div class="answer-row">
+          <input id="answerInput" type="text" autocomplete="off" placeholder="Gõ từ tiếng Anh..." maxlength="20">
+        </div>
+        <div class="hint-line" id="hintLine"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="answer-row" style="margin-top:16px;">
+          <button class="btn btn-hint" id="hintBtn" onclick="showHint()">💡 Gợi ý</button>
+          <button class="btn btn-check" id="checkBtn" onclick="checkAnswer()">✅ Kiểm tra</button>
+          <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">➡️ Câu tiếp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: kết quả -->
+    <div class="screen" id="screen-end">
+      <span class="end-emoji" id="endEmoji">🏆</span>
+      <div class="end-title" id="endTitle">Xuất sắc!</div>
+      <div class="stars-row" id="starsRow"></div>
+      <div class="score10-box" id="score10Box">
+        <span class="score10-label">Điểm số</span>
+        <span class="score10-num" id="score10Num">0</span>
+        <span class="score10-max">/10</span>
+      </div>
+      <div class="end-stats" id="endStats"></div>
+      <div class="wrong-list" id="wrongBox" style="display:none;">
+        <h3>📝 Ôn lại những từ này nhé:</h3>
+        <div id="wrongItems"></div>
+      </div>
+      <div class="center-btns">
+        <button class="btn btn-check" onclick="retrySame()">🔁 Làm lại bài kiểm tra</button>
+        <button class="btn btn-navy" onclick="goHome()">🏠 Về trang chủ</button>
+      </div>
+    </div>
+
+  </div>
+  <footer class="note">Fa 3 · Day 79 · Review Unit 12–15</footer>
+</div>
+
+<script>
+/* ===================== DỮ LIỆU TỪ VỰNG ===================== */
+const DATA = {
+  adj: [
+    {en:"serious", vi:"nghiêm nghị", emoji:"😐"},
+    {en:"friendly", vi:"thân thiện", emoji:"🤗"},
+    {en:"generous", vi:"hào phóng", emoji:"🎁"},
+    {en:"pretty", vi:"xinh đẹp", emoji:"🌸"},
+    {en:"handsome", vi:"đẹp trai", emoji:"🤵"},
+    {en:"active", vi:"năng động", emoji:"⚡"},
+    {en:"funny", vi:"vui tính", emoji:"😂"},
+    {en:"shy", vi:"ngại ngùng", emoji:"🙈"},
+    {en:"hard-working", vi:"chăm chỉ", emoji:"💪"},
+    {en:"intelligent", vi:"thông minh", emoji:"🧠"},
+    {en:"cheerful", vi:"vui mừng", emoji:"😄"},
+    {en:"miserable", vi:"cực khổ", emoji:"😢"},
+    {en:"relaxed", vi:"thoải mái", emoji:"😌"},
+    {en:"worried", vi:"lo lắng", emoji:"😟"},
+    {en:"mean", vi:"ích kỉ", emoji:"😈"},
+  ],
+  job: [
+    {en:"pilot", vi:"phi công", emoji:"✈️"},
+    {en:"journalist", vi:"nhà báo", emoji:"📰"},
+    {en:"architect", vi:"kiến trúc sư", emoji:"📐"},
+    {en:"writer", vi:"nhà văn", emoji:"✍️"},
+    {en:"shopkeeper", vi:"người chủ hiệu", emoji:"🏪"},
+    {en:"designer", vi:"nhà thiết kế", emoji:"🎨"},
+    {en:"engineer", vi:"kỹ sư", emoji:"⚙️"},
+    {en:"artist", vi:"nghệ sĩ", emoji:"🖌️"},
+    {en:"interpreter", vi:"phiên dịch viên", emoji:"🗣️"},
+    {en:"barman", vi:"người phục vụ nước", emoji:"🍹"},
+  ],
+  sub: [
+    {en:"geography", vi:"địa lý", emoji:"🌍"},
+    {en:"maths", vi:"toán", emoji:"➗"},
+    {en:"history", vi:"lịch sử", emoji:"🏛️"},
+    {en:"art", vi:"nghệ thuật", emoji:"🖼️"},
+    {en:"science", vi:"môn khoa học", emoji:"🔬"},
+  ],
+  thing: [
+    {en:"paint", vi:"sơn", emoji:"🎨"},
+    {en:"paintbrush", vi:"chổi quét sơn", emoji:"🖌️"},
+    {en:"calculator", vi:"máy tính cầm tay", emoji:"🧮"},
+    {en:"lunch box", vi:"hộp đựng đồ ăn", emoji:"🍱"},
+    {en:"dictionary", vi:"từ điển", emoji:"📖"},
+    {en:"PE kit", vi:"bộ dụng cụ thể dục", emoji:"🩳"},
+    {en:"backpack", vi:"ba lô", emoji:"🎒"},
+    {en:"apron", vi:"tạp dề", emoji:"🥻"},
+    {en:"torch", vi:"đèn pin", emoji:"🔦"},
+    {en:"newspaper", vi:"báo", emoji:"🗞️"},
+    {en:"tent", vi:"lều", emoji:"⛺"},
+    {en:"sleeping bag", vi:"túi ngủ", emoji:"🛏️"},
+    {en:"frying pan", vi:"chảo rán", emoji:"🍳"},
+    {en:"matches", vi:"diêm", emoji:"🔥"},
+    {en:"rope", vi:"dây", emoji:"🪢"},
+    {en:"suitcase", vi:"cái vali", emoji:"🧳"},
+    {en:"suncream", vi:"kem chống nắng", emoji:"🧴"},
+    {en:"towel", vi:"khăn", emoji:"🏖️"},
+    {en:"soap", vi:"xà phòng", emoji:"🧼"},
+    {en:"toothpaste", vi:"kem đánh răng", emoji:"🪥"},
+    {en:"shampoo", vi:"dầu gội", emoji:"🧴"},
+    {en:"hairbrush", vi:"bàn chải tóc", emoji:"💇"},
+    {en:"toothbrush", vi:"bàn chải răng", emoji:"🪥"},
+    {en:"sledge", vi:"xe trượt tuyết", emoji:"🛷"},
+    {en:"swimsuit", vi:"đồ bơi", emoji:"👙"},
+  ]
+};
+const CAT_NAME = {adj:"Tính cách", job:"Nghề nghiệp", sub:"Môn học", thing:"Đồ vật"};
+
+// Đếm tổng số từ hiển thị trên nút bắt đầu
+const ALL_COUNT = DATA.adj.length + DATA.job.length + DATA.sub.length + DATA.thing.length;
+document.getElementById('cnt-all').textContent = ALL_COUNT + " từ · trộn ngẫu nhiên";
+
+/* ===================== TRẠNG THÁI TRÒ CHƠI ===================== */
+let queue = [];
+let idx = 0;
+let score = 0;
+let wrongWords = [];
+let answeredThis = false;
+let currentCatKey = null;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function buildQueue(catKey){
+  let list;
+  if(catKey === 'all'){
+    list = [];
+    for(const k of ['adj','job','sub','thing']){
+      DATA[k].forEach(w => list.push({...w, cat:k}));
+    }
+  } else {
+    list = DATA[catKey].map(w => ({...w, cat:catKey}));
+  }
+  return shuffle(list);
+}
+
+/* ===================== ĐIỀU HƯỚNG MÀN HÌNH ===================== */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+document.querySelectorAll('.tent-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const cat = btn.dataset.cat;
+    startGame(cat);
+  });
+});
+
+function startGame(catKey){
+  currentCatKey = catKey;
+  queue = buildQueue(catKey);
+  idx = 0;
+  score = 0;
+  wrongWords = [];
+  buildFlags();
+  showScreen('screen-quiz');
+  loadQuestion();
+}
+
+function retrySame(){ startGame(currentCatKey); }
+function goHome(){ showScreen('screen-home'); }
+
+/* ===================== CỜ TIẾN ĐỘ ===================== */
+function buildFlags(){
+  const row = document.getElementById('flagsRow');
+  row.innerHTML = '';
+  queue.forEach((_,i)=>{
+    const f = document.createElement('div');
+    f.className = 'flag';
+    f.id = 'flag-'+i;
+    row.appendChild(f);
+  });
+}
+
+/* ===================== CÂU HỎI ===================== */
+function loadQuestion(){
+  answeredThis = false;
+  const q = queue[idx];
+  document.getElementById('qEmoji').textContent = q.emoji || '🎈';
+  document.getElementById('qVi').textContent = q.vi;
+  document.getElementById('qCat').textContent = CAT_NAME[q.cat] || '';
+  const input = document.getElementById('answerInput');
+  input.value = '';
+  input.className = '';
+  input.disabled = false;
+  document.getElementById('hintLine').textContent = '';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('checkBtn').style.display = 'inline-block';
+  document.getElementById('hintBtn').style.display = 'inline-block';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('scoreNow').textContent = score;
+  input.focus();
+}
+
+function normalize(s){
+  return s.trim().toLowerCase().replace(/\s+/g,' ');
+}
+
+function showHint(){
+  const q = queue[idx];
+  const letters = q.en.split('').map(ch => ch === ' ' || ch === '-' ? ch : '_').join(' ');
+  document.getElementById('hintLine').textContent =
+    "Gợi ý: chữ cái đầu là \"" + q.en[0].toUpperCase() + "\"  ·  " + letters + "  (" + q.en.length + " ký tự)";
+}
+
+function checkAnswer(){
+  if(answeredThis) return;
+  const q = queue[idx];
+  const input = document.getElementById('answerInput');
+  const val = normalize(input.value);
+  const correct = normalize(q.en);
+  const fb = document.getElementById('feedback');
+
+  if(val.length === 0){
+    input.classList.add('shake');
+    setTimeout(()=>input.classList.remove('shake'), 350);
+    return;
+  }
+
+  answeredThis = true;
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('hintBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+  input.disabled = true;
+
+  if(val === correct){
+    score++;
+    input.classList.add('right');
+    fb.textContent = "🎉 Chính xác! " + q.en.toUpperCase() + " = " + q.vi;
+    fb.className = 'feedback ok';
+    markFlag(idx, true);
+    burstConfetti();
+  } else {
+    input.classList.add('shake');
+    fb.textContent = "❌ Chưa đúng! Đáp án là: " + q.en;
+    fb.className = 'feedback no';
+    markFlag(idx, false);
+    wrongWords.push(q);
+  }
+  document.getElementById('scoreNow').textContent = score;
+}
+
+function markFlag(i, ok){
+  const f = document.getElementById('flag-'+i);
+  if(!f) return;
+  f.classList.add(ok ? 'done' : 'wrong-flag');
+}
+
+function nextQuestion(){
+  idx++;
+  if(idx >= queue.length){
+    endGame();
+  } else {
+    loadQuestion();
+  }
+}
+
+document.getElementById('answerInput').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){
+    if(!answeredThis) checkAnswer();
+    else nextQuestion();
+  }
+});
+
+/* ===================== KẾT THÚC ===================== */
+function endGame(){
+  showScreen('screen-end');
+  const total = queue.length;
+  const pct = total ? Math.round((score/total)*100) : 0;
+  let emoji, title;
+  if(pct === 100){ emoji='🏆'; title='Xuất sắc! Bạn là Vua Từ Vựng!'; }
+  else if(pct >= 80){ emoji='🎊'; title='Tuyệt vời lắm!'; }
+  else if(pct >= 50){ emoji='🎈'; title='Khá đấy, cố lên nữa!'; }
+  else{ emoji='🌱'; title='Cứ luyện tập thêm nhé!'; }
+
+  const score10 = total ? Math.round((score/total)*10*10)/10 : 0; // làm tròn 1 chữ số thập phân
+  const score10Str = Number.isInteger(score10) ? score10.toString() : score10.toFixed(1);
+
+  document.getElementById('endEmoji').textContent = emoji;
+  document.getElementById('endTitle').textContent = title;
+  document.getElementById('score10Num').textContent = score10Str;
+  document.getElementById('endStats').textContent =
+    "Đúng " + score + " / " + total + " câu  ·  (" + pct + "%)";
+
+  const starCount = pct===100?3 : pct>=60?2 : pct>0?1:0;
+  document.getElementById('starsRow').textContent = "⭐".repeat(starCount) + "☆".repeat(3-starCount);
+
+  const box = document.getElementById('wrongBox');
+  const list = document.getElementById('wrongItems');
+  list.innerHTML = '';
+  if(wrongWords.length > 0){
+    box.style.display = 'block';
+    wrongWords.forEach(w=>{
+      const row = document.createElement('div');
+      row.className = 'wrong-item';
+      row.innerHTML = '<span>'+w.emoji+' '+w.vi+'</span><b>'+w.en+'</b>';
+      list.appendChild(row);
+    });
+  } else {
+    box.style.display = 'none';
+  }
+
+  if(pct >= 80) burstConfetti(28);
+}
+
+/* ===================== HIỆU ỨNG CONFETTI ===================== */
+function burstConfetti(n){
+  n = n || 16;
+  const colors = ['#E8433A','#FFC93C','#28B8A6','#6C63FF','#FFFFFF'];
+  for(let i=0;i<n;i++){
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random()*100 + 'vw';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDuration = (1.6 + Math.random()*1.2) + 's';
+    p.style.transform = 'rotate(' + (Math.random()*360) + 'deg)';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 3000);
+  }
+}
+</script>
+</body>
+</html>
